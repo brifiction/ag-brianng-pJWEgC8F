@@ -18,3 +18,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Express API with `GET /api/health` and `GET /api/vehicles`.
 - React web app with Vite, Tailwind CSS and shadcn/ui.
 - Vitest with Testing Library and axe-core accessibility checks (`pnpm test`).
+- shadcn/ui form components: select, field, input, label, card, alert and spinner.
