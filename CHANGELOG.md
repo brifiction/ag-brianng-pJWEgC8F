@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- README sections for reviewers: "Try it", "Project structure" and "How it works".
+
 ### Changed
 
 - API errors are converted in one place (`toApiError`) before being sent.

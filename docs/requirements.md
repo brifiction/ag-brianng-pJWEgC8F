@@ -79,40 +79,40 @@ A JSON logbook is an object with an `entries` array. Sample: `samples/logbook.js
 }
 ```
 
-| Field                   | Type   | Rule                                     |
-| ----------------------- | ------ | ---------------------------------------- |
-| `entries`               | array  | Required. At least one entry.            |
+| Field                   | Type   | Rule                                          |
+| ----------------------- | ------ | --------------------------------------------- |
+| `entries`               | array  | Required. At least one entry.                 |
 | `entries[].date`        | string | Required. A real calendar date, `YYYY-MM-DD`. |
-| `entries[].odometerKm`  | number | Required. A whole number, 0 or more.     |
-| `entries[].description` | string | Required. Not blank.                     |
-| `entries[].workshop`    | string | Optional. Not blank when present.        |
+| `entries[].odometerKm`  | number | Required. A whole number, 0 or more.          |
+| `entries[].description` | string | Required. Not blank.                          |
+| `entries[].workshop`    | string | Optional. Not blank when present.             |
 
 Unknown fields are ignored. Entries are kept in file order.
 
 ## 5. Business rules
 
-| ID        | Rule                                                                                                                                                                                 | Source                                                  |
-| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------- |
-| **BR-01** | A vehicle is identified by exactly one Make, one Model and one Badge.                                                                                                                | Brief, The Task                                         |
-| **BR-02** | A Make + Model + Badge combination is valid only if it exists in the catalogue. Badge names are unique within a Model, not globally.                                                 | Vehicle Data                                            |
-| **BR-03** | Make options are every Make key in the catalogue. Makes are shown with display labels (`ford` → "Ford", `bmw` → "BMW", `tesla` → "Tesla"). The key is the value that gets submitted. | Vehicle Data; _assumption A-01_                         |
-| **BR-04** | Model options are only the Models of the selected Make. Model is unavailable until a Make is selected.                                                                               | Brief, The Task                                         |
-| **BR-05** | Badge options are only the Badges of the selected Model. Badge is unavailable until a Model is selected.                                                                             | Brief, The Task                                         |
-| **BR-06** | Changing the **Make** clears the Model and Badge and loads the Models for the new Make.                                                                                              | Brief, The Task                                         |
-| **BR-07** | Changing the **Model** clears the Badge and loads the Badges for the new Model. The Make is kept.                                                                                    | Brief, The Task                                         |
-| **BR-08** | Logbook upload is available only once a Badge is selected. Any change to the vehicle (Make, Model, Badge or a different quick-select) clears the attached logbook.                    | Brief, The Task; _assumption A-03_                      |
-| **BR-09** | The logbook must be one file, either plain text (`.txt`, `text/plain`) or JSON (`.json`, `application/json`). It must be UTF-8, non-empty, and no larger than **1 MB**.           | Brief, The Task; _assumptions A-04, A-05; decision D-03_ |
-| **BR-10** | At least two quick-select buttons exist. Each one sets Make, Model and Badge to a valid catalogue vehicle and replaces any current selection.                                        | Brief, The Task                                         |
-| **BR-11** | A quick-select that changes the vehicle follows BR-08: any attached logbook is cleared.                                                                                              | _Assumption A-03_                                       |
-| **BR-12** | The form can be submitted only when Make, Model, Badge and a valid logbook are all present.                                                                                          | Brief, Submission                                       |
-| **BR-13** | The form is submitted as a single `multipart/form-data` POST to the API.                                                                                                             | Brief, Submission                                       |
-| **BR-14** | The API re-validates BR-02 and BR-09 itself and never trusts the client. Invalid requests are rejected with a 4xx response and a reason.                                             | _Real-world practice_; brief, "Build it like it's real" |
-| **BR-15** | A successful response contains the Make, Model, Badge, the logbook's format and its full text, plus the parsed entries for a JSON logbook (BR-20).                                    | Brief, Submission                                       |
-| **BR-16** | The page shows the returned Make, Model, Badge and logbook contents. A text logbook is shown as literal text with whitespace kept. User-supplied text is never interpreted as HTML. | Brief, Submission; _security_                           |
-| **BR-17** | The API is the single source of truth for the catalogue (`GET /api/vehicles`). The client does not keep its own copy.                                                                | _Design decision D-01_                                  |
-| **BR-18** | Uploaded files are temporary. The API reads the file with `node:fs` and removes it from disk once the request is finished, whether it succeeded or failed.                           | _Assumption A-06_                                       |
-| **BR-19** | A JSON logbook must parse as JSON and match the logbook JSON format (section 4). Otherwise it is rejected with a message naming the first problem found.                          | _Decision D-03_                                         |
-| **BR-20** | For a JSON logbook, the page shows the entries as a table (Date, Odometer, Description, Workshop), one row per entry in file order.                                                 | _Decision D-03_                                         |
+| ID        | Rule                                                                                                                                                                                 | Source                                                   |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------- |
+| **BR-01** | A vehicle is identified by exactly one Make, one Model and one Badge.                                                                                                                | Brief, The Task                                          |
+| **BR-02** | A Make + Model + Badge combination is valid only if it exists in the catalogue. Badge names are unique within a Model, not globally.                                                 | Vehicle Data                                             |
+| **BR-03** | Make options are every Make key in the catalogue. Makes are shown with display labels (`ford` → "Ford", `bmw` → "BMW", `tesla` → "Tesla"). The key is the value that gets submitted. | Vehicle Data; _assumption A-01_                          |
+| **BR-04** | Model options are only the Models of the selected Make. Model is unavailable until a Make is selected.                                                                               | Brief, The Task                                          |
+| **BR-05** | Badge options are only the Badges of the selected Model. Badge is unavailable until a Model is selected.                                                                             | Brief, The Task                                          |
+| **BR-06** | Changing the **Make** clears the Model and Badge and loads the Models for the new Make.                                                                                              | Brief, The Task                                          |
+| **BR-07** | Changing the **Model** clears the Badge and loads the Badges for the new Model. The Make is kept.                                                                                    | Brief, The Task                                          |
+| **BR-08** | Logbook upload is available only once a Badge is selected. Any change to the vehicle (Make, Model, Badge or a different quick-select) clears the attached logbook.                   | Brief, The Task; _assumption A-03_                       |
+| **BR-09** | The logbook must be one file, either plain text (`.txt`, `text/plain`) or JSON (`.json`, `application/json`). It must be UTF-8, non-empty, and no larger than **1 MB**.              | Brief, The Task; _assumptions A-04, A-05; decision D-03_ |
+| **BR-10** | At least two quick-select buttons exist. Each one sets Make, Model and Badge to a valid catalogue vehicle and replaces any current selection.                                        | Brief, The Task                                          |
+| **BR-11** | A quick-select that changes the vehicle follows BR-08: any attached logbook is cleared.                                                                                              | _Assumption A-03_                                        |
+| **BR-12** | The form can be submitted only when Make, Model, Badge and a valid logbook are all present.                                                                                          | Brief, Submission                                        |
+| **BR-13** | The form is submitted as a single `multipart/form-data` POST to the API.                                                                                                             | Brief, Submission                                        |
+| **BR-14** | The API re-validates BR-02 and BR-09 itself and never trusts the client. Invalid requests are rejected with a 4xx response and a reason.                                             | _Real-world practice_; brief, "Build it like it's real"  |
+| **BR-15** | A successful response contains the Make, Model, Badge, the logbook's format and its full text, plus the parsed entries for a JSON logbook (BR-20).                                   | Brief, Submission                                        |
+| **BR-16** | The page shows the returned Make, Model, Badge and logbook contents. A text logbook is shown as literal text with whitespace kept. User-supplied text is never interpreted as HTML.  | Brief, Submission; _security_                            |
+| **BR-17** | The API is the single source of truth for the catalogue (`GET /api/vehicles`). The client does not keep its own copy.                                                                | _Design decision D-01_                                   |
+| **BR-18** | Uploaded files are temporary. The API reads the file with `node:fs` and removes it from disk once the request is finished, whether it succeeded or failed.                           | _Assumption A-06_                                        |
+| **BR-19** | A JSON logbook must parse as JSON and match the logbook JSON format (section 4). Otherwise it is rejected with a message naming the first problem found.                             | _Decision D-03_                                          |
+| **BR-20** | For a JSON logbook, the page shows the entries as a table (Date, Odometer, Description, Workshop), one row per entry in file order.                                                  | _Decision D-03_                                          |
 
 ## 6. User stories and acceptance criteria
 
@@ -408,18 +408,18 @@ type LogbookEntry = {
 
 Error body: `{ "error": { "code": string, "message": string, "field"?: string } }`
 
-| Code               | Status | When                                                     |
-| ------------------ | ------ | -------------------------------------------------------- |
-| `MISSING_FIELD`    | 400    | `make`, `model` or `badge` is missing                    |
+| Code               | Status | When                                                        |
+| ------------------ | ------ | ----------------------------------------------------------- |
+| `MISSING_FIELD`    | 400    | `make`, `model` or `badge` is missing                       |
 | `INVALID_VEHICLE`  | 400    | The vehicle is not in the catalogue; `field` names the part |
-| `MISSING_FILE`     | 400    | No logbook file was attached                             |
-| `EMPTY`            | 400    | The logbook file is empty                                |
-| `NOT_UTF8`         | 400    | The logbook is not UTF-8 text                            |
-| `INVALID_JSON`     | 400    | A JSON logbook breaks BR-19; `message` names the problem |
-| `INVALID_UPLOAD`   | 400    | More than one file, or unexpected form fields            |
-| `UNSUPPORTED_TYPE` | 415    | The file is neither plain text nor JSON                  |
-| `TOO_LARGE`        | 413    | The file is over 1 MB                                    |
-| `INTERNAL_ERROR`   | 500    | Anything unexpected; details are logged, not returned    |
+| `MISSING_FILE`     | 400    | No logbook file was attached                                |
+| `EMPTY`            | 400    | The logbook file is empty                                   |
+| `NOT_UTF8`         | 400    | The logbook is not UTF-8 text                               |
+| `INVALID_JSON`     | 400    | A JSON logbook breaks BR-19; `message` names the problem    |
+| `INVALID_UPLOAD`   | 400    | More than one file, or unexpected form fields               |
+| `UNSUPPORTED_TYPE` | 415    | The file is neither plain text nor JSON                     |
+| `TOO_LARGE`        | 413    | The file is over 1 MB                                       |
+| `INTERNAL_ERROR`   | 500    | Anything unexpected; details are logged, not returned       |
 
 ## 8. Non-functional requirements
 
@@ -433,28 +433,28 @@ Error body: `{ "error": { "code": string, "message": string, "field"?: string } 
 
 ## 9. Assumptions, decisions and open questions
 
-| ID   | Type       | Item                                                                                                                          |
-| ---- | ---------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| A-01 | Assumption | Make display labels: Ford, BMW, Tesla. Model and Badge are shown exactly as they appear in the data.                          |
-| A-02 | Assumption | There is no default selection on load. The user starts from Make or a quick-select.                                           |
-| A-03 | Assumption | A logbook belongs to a specific vehicle, so changing the vehicle clears it. **Confirm against the demo video.**               |
-| A-04 | Assumption | Plain text means `text/plain` / `.txt`; JSON means `application/json` / `.json`. Both are UTF-8. Browsers sometimes report no type, so the extension is the fallback. |
-| A-05 | Assumption | The size limit is 1 MB, which is generous for a text or JSON logbook.                                                         |
-| A-06 | Assumption | Submissions are not stored. The API echoes the data back and discards the file.                                               |
-| D-01 | Decision   | The catalogue is served by the API (BR-17), so client and server cannot drift apart.                                          |
-| D-02 | Decision   | Quick-select presets: **Ford Ranger Raptor**, **Tesla Model 3 Performance** and **BMW 130d xDrive 26d**.                      |
+| ID   | Type       | Item                                                                                                                                                                                                                                                 |
+| ---- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| A-01 | Assumption | Make display labels: Ford, BMW, Tesla. Model and Badge are shown exactly as they appear in the data.                                                                                                                                                 |
+| A-02 | Assumption | There is no default selection on load. The user starts from Make or a quick-select.                                                                                                                                                                  |
+| A-03 | Assumption | A logbook belongs to a specific vehicle, so changing the vehicle clears it. **Confirm against the demo video.**                                                                                                                                      |
+| A-04 | Assumption | Plain text means `text/plain` / `.txt`; JSON means `application/json` / `.json`. Both are UTF-8. Browsers sometimes report no type, so the extension is the fallback.                                                                                |
+| A-05 | Assumption | The size limit is 1 MB, which is generous for a text or JSON logbook.                                                                                                                                                                                |
+| A-06 | Assumption | Submissions are not stored. The API echoes the data back and discards the file.                                                                                                                                                                      |
+| D-01 | Decision   | The catalogue is served by the API (BR-17), so client and server cannot drift apart.                                                                                                                                                                 |
+| D-02 | Decision   | Quick-select presets: **Ford Ranger Raptor**, **Tesla Model 3 Performance** and **BMW 130d xDrive 26d**.                                                                                                                                             |
 | D-03 | Decision   | Logbooks can be JSON as well as plain text. JSON gives service history a structure that can be created, read, updated and deleted later. Plain text stays supported because the brief requires it and reviewers test with their own plain-text file. |
-| Q-01 | Open       | Should the form reset after a successful submission, or keep the values? (Assumed: keep them, and offer a Reset as in US-12.) |
-| Q-02 | Open       | Does the demo video show any behaviour not covered here, such as the success message wording or the button placement?         |
+| Q-01 | Open       | Should the form reset after a successful submission, or keep the values? (Assumed: keep them, and offer a Reset as in US-12.)                                                                                                                        |
+| Q-02 | Open       | Does the demo video show any behaviour not covered here, such as the success message wording or the button placement?                                                                                                                                |
 
 ## 10. Traceability
 
-| Requirement in brief                                | Business rules      | Stories             |
-| --------------------------------------------------- | ------------------- | ------------------- |
-| Make → Model → Badge selection                      | BR-01 to BR-05      | US-01, US-02, US-03 |
-| Clear dependents when Make or Model changes         | BR-06, BR-07, BR-08 | US-04               |
-| Quick-select buttons (2 or more)                    | BR-10, BR-11        | US-05               |
-| Upload a logbook after a Badge is chosen            | BR-08, BR-09, BR-19 | US-06               |
+| Requirement in brief                                | Business rules        | Stories             |
+| --------------------------------------------------- | --------------------- | ------------------- |
+| Make → Model → Badge selection                      | BR-01 to BR-05        | US-01, US-02, US-03 |
+| Clear dependents when Make or Model changes         | BR-06, BR-07, BR-08   | US-04               |
+| Quick-select buttons (2 or more)                    | BR-10, BR-11          | US-05               |
+| Upload a logbook after a Badge is chosen            | BR-08, BR-09, BR-19   | US-06               |
 | POST to the server; response shown on the page      | BR-12 to BR-16, BR-20 | US-07, US-08, US-09 |
-| README with run instructions                        | —                   | US-10               |
-| "Build it like it's real" / "Function and UX"       | BR-14, BR-18        | US-08, US-09, US-11 |
+| README with run instructions                        | —                     | US-10               |
+| "Build it like it's real" / "Function and UX"       | BR-14, BR-18          | US-08, US-09, US-11 |
