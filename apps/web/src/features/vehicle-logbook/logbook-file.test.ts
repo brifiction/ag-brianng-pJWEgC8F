@@ -1,10 +1,24 @@
 import { MAX_LOGBOOK_BYTES } from '@autograb/logbook';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { LOGBOOK_ACCEPT, validateLogbook } from './logbook-file.ts';
 
+/**
+ * A plain-text file; name and type can be overridden.
+ * @param content - File bytes or text.
+ * @param name - File name.
+ * @param type - MIME type.
+ * @returns The file.
+ */
 const textFile = (content: BlobPart, name = 'logbook.txt', type = 'text/plain') =>
   new File([content], name, { type });
 
+/**
+ * A JSON file; name and type can be overridden.
+ * @param content - File text.
+ * @param name - File name.
+ * @param type - MIME type.
+ * @returns The file.
+ */
 const jsonFile = (content: string, name = 'logbook.json', type = 'application/json') =>
   new File([content], name, { type });
 
@@ -53,7 +67,8 @@ describe('validateLogbook', () => {
 
   it('never reads a file that is too large', async () => {
     const file = textFile(new Uint8Array(MAX_LOGBOOK_BYTES + 1));
-    file.arrayBuffer = () => Promise.reject(new Error('should not be read'));
+    const read = vi.spyOn(file, 'arrayBuffer');
     await expect(validateLogbook(file)).resolves.toBe('Logbook must be 1 MB or smaller');
+    expect(read).not.toHaveBeenCalled();
   });
 });

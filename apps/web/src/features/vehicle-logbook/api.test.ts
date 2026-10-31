@@ -4,6 +4,12 @@ import { toErrorMessage } from './api.ts';
 
 const GENERIC = 'Something went wrong, please try again';
 
+/**
+ * An Axios error carrying an HTTP status and response body.
+ * @param status - HTTP status code.
+ * @param data - Response body.
+ * @returns The Axios error.
+ */
 const responseError = (status: number, data: unknown) =>
   new AxiosError('Request failed', 'ERR_BAD_RESPONSE', undefined, undefined, {
     status,

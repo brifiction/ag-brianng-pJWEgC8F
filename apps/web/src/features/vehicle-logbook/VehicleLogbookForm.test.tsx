@@ -12,9 +12,19 @@ vi.mock('./api.ts', async (importOriginal) => ({
   submitLogbook: vi.fn(),
 }));
 
+/**
+ * A plain-text logbook file.
+ * @param content - File text.
+ * @returns A `.txt` file.
+ */
 const logbookFile = (content = '2024-03-12 Service #1') =>
   new File([content], 'logbook.txt', { type: 'text/plain' });
 
+/**
+ * A JSON logbook file with the given content.
+ * @param content - File text, usually JSON.
+ * @returns A `.json` file.
+ */
 const jsonLogbookFile = (content: string) =>
   new File([content], 'logbook.json', { type: 'application/json' });
 
@@ -30,6 +40,10 @@ const JSON_LOGBOOK = {
   ],
 };
 
+/**
+ * Renders the form inside a landmark and returns a user-event session.
+ * @returns The user-event session and the render result.
+ */
 function setup() {
   /** `applyAccept: false` lets tests upload files the input's `accept` would filter out. */
   const user = userEvent.setup({ applyAccept: false });
@@ -41,15 +55,40 @@ function setup() {
   return { user, ...view };
 }
 
+/**
+ * A dropdown by its label.
+ * @param name - The dropdown's label.
+ * @returns The dropdown's trigger.
+ */
 const field = (name: string) => screen.getByRole('combobox', { name });
+/**
+ * The logbook file input.
+ * @returns The file input.
+ */
 const fileInput = () => screen.getByLabelText<HTMLInputElement>('Service logbook');
+/**
+ * The Submit button.
+ * @returns The Submit button.
+ */
 const submitButton = () => screen.getByRole('button', { name: 'Submit' });
 
+/**
+ * Opens a dropdown and picks an option.
+ * @param user - User-event session.
+ * @param name - The dropdown's label.
+ * @param option - The option to pick.
+ */
 async function choose(user: UserEvent, name: string, option: string) {
   await user.click(field(name));
   await user.click(await screen.findByRole('option', { name: option }));
 }
 
+/**
+ * Opens a dropdown, reads its options, then closes it.
+ * @param user - User-event session.
+ * @param name - The dropdown's label.
+ * @returns The option labels, in order.
+ */
 async function optionsOf(user: UserEvent, name: string) {
   await user.click(field(name));
   const options = screen.getAllByRole('option').map((option) => option.textContent);
@@ -57,6 +96,13 @@ async function optionsOf(user: UserEvent, name: string) {
   return options;
 }
 
+/**
+ * Picks make, model and badge in order.
+ * @param user - User-event session.
+ * @param make - Make label, e.g. "Ford".
+ * @param model - Model name.
+ * @param badge - Badge name.
+ */
 async function selectVehicle(user: UserEvent, make: string, model: string, badge: string) {
   await choose(user, 'Make', make);
   await choose(user, 'Model', model);

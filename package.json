@@ -12,14 +12,16 @@
     "build": "turbo run build",
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
-    "lint": "biome check . && eslint .",
-    "lint:fix": "biome check --write . && eslint . --fix",
+    "lint": "biome check --error-on-warnings . && eslint .",
+    "lint:fix": "biome check --write --error-on-warnings . && eslint . --fix",
     "format": "biome format --write ."
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.15",
     "eslint": "~10.13.0",
+    "eslint-plugin-jsdoc": "^65.3.8",
     "eslint-plugin-sonarjs": "^4.2.2",
+    "eslint-plugin-tsdoc": "^0.5.4",
     "turbo": "^2.11.9",
     "typescript": "~6.0.3",
     "typescript-eslint": "^8.71.2"

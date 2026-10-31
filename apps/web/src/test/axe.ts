@@ -8,6 +8,7 @@ const OPTIONS: axe.RunOptions = {
 
 /**
  * Runs axe against a rendered element.
+ * @param element - The rendered element to check.
  * @returns One readable line per violation, so `toEqual([])` failures name the rule and nodes.
  */
 export async function axeViolations(element: Element): Promise<string[]> {

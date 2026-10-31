@@ -31,15 +31,15 @@ pnpm dev
 
 ## Scripts
 
-| Command          | Purpose                          |
-| ---------------- | -------------------------------- |
-| `pnpm dev`       | Run web and API in watch mode    |
-| `pnpm build`     | Build both apps                  |
-| `pnpm typecheck` | Type-check both apps             |
-| `pnpm test`      | Run unit and accessibility tests |
-| `pnpm lint`      | Biome check and SonarJS lint     |
-| `pnpm lint:fix`  | Auto-fix lint issues and format  |
-| `pnpm format`    | Format with Biome                |
+| Command          | Purpose                           |
+| ---------------- | --------------------------------- |
+| `pnpm dev`       | Run web and API in watch mode     |
+| `pnpm build`     | Build both apps                   |
+| `pnpm typecheck` | Type-check every workspace        |
+| `pnpm test`      | Run unit and accessibility tests  |
+| `pnpm lint`      | Biome, SonarJS and TypeDoc checks |
+| `pnpm lint:fix`  | Auto-fix lint issues and format   |
+| `pnpm format`    | Format with Biome                 |
 
 Production API: `pnpm build && pnpm --filter @autograb/api start`.
 

@@ -8,13 +8,18 @@ import {
   vehicleLabel,
 } from './catalogue.ts';
 
+/** Props for the quick-select buttons. */
 interface QuickSelectProps {
   catalogue: VehicleCatalogue;
   current: Vehicle;
   onSelect: (vehicle: Vehicle) => void;
 }
 
-/** Preset buttons; presets missing from the catalogue are hidden. */
+/**
+ * Preset buttons; presets missing from the catalogue are hidden.
+ * @param props - The catalogue, the current vehicle and what to do on select.
+ * @returns The preset buttons, or nothing when no preset is in the catalogue.
+ */
 export function QuickSelect({ catalogue, current, onSelect }: Readonly<QuickSelectProps>) {
   const presets = QUICK_SELECTS.filter((vehicle) => isValidVehicle(catalogue, vehicle));
   if (presets.length === 0) return null;

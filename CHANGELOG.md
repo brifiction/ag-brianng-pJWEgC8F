@@ -9,7 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Every function has a TypeDoc comment: a summary, `@param` for each parameter and `@returns`. ESLint checks it with the standard `eslint-plugin-jsdoc` preset and `eslint-plugin-tsdoc`.
 - Logbook file rules live in a shared package (`packages/files/logbook`), so the web app and API apply the same checks.
+- Lint and Turborepo config list only non-default settings; Biome fails on any recommended-rule warning.
 
 ## [0.2.0] - 2026-10-31
 

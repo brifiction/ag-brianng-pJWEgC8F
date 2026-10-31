@@ -7,11 +7,13 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
+/** One dropdown option: the submitted value and its display label. */
 export interface SelectOption {
   value: string;
   label: string;
 }
 
+/** Props for one labelled vehicle dropdown. */
 interface VehicleSelectProps {
   id: string;
   label: string;
@@ -25,7 +27,11 @@ interface VehicleSelectProps {
   error?: string;
 }
 
-/** Labelled dropdown with hint and error text linked via `aria-describedby`. */
+/**
+ * Labelled dropdown with hint and error text linked via `aria-describedby`.
+ * @param props - Id, label, options, value and change handler, plus optional hint and error.
+ * @returns A labelled dropdown.
+ */
 export function VehicleSelect({
   id,
   label,

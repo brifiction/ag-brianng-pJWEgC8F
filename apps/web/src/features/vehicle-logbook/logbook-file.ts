@@ -9,6 +9,7 @@ export const LOGBOOK_ACCEPT = LOGBOOK_FORMATS.flatMap(({ extension, type }) => [
 /**
  * Validates a chosen file against the shared logbook rules.
  * Type and size are checked first, so an oversized file is never read into memory.
+ * @param file - The chosen file, or `null` when none is attached.
  * @returns An error message, or `true` when the file is valid.
  */
 export async function validateLogbook(file: File | null): Promise<string | true> {

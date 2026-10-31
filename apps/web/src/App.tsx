@@ -5,6 +5,10 @@ import { Spinner } from '@/components/ui/spinner';
 import { useCatalogue } from './features/vehicle-logbook/use-catalogue.ts';
 import { VehicleLogbookForm } from './features/vehicle-logbook/VehicleLogbookForm.tsx';
 
+/**
+ * Shows loading or error states until the catalogue arrives, then the form.
+ * @returns A loading message, an error with Retry, or the form.
+ */
 function CatalogueGate() {
   const { state, retry } = useCatalogue();
 
@@ -33,6 +37,10 @@ function CatalogueGate() {
   return <VehicleLogbookForm catalogue={state.catalogue} />;
 }
 
+/**
+ * Page layout: a card holding the vehicle logbook form.
+ * @returns The page.
+ */
 export function App() {
   return (
     <main className="mx-auto flex min-h-svh w-full max-w-xl flex-col px-4 py-10">

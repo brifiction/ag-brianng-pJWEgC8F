@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import { checkLogbookFile, MAX_LOGBOOK_BYTES, readLogbook } from './read-logbook.ts';
 
+/**
+ * UTF-8 bytes of a string.
+ * @param text - The text to encode.
+ * @returns Its UTF-8 bytes.
+ */
 const encode = (text: string) => new TextEncoder().encode(text);
 
 const textFile = { name: 'logbook.txt', type: 'text/plain', size: 0 };
@@ -50,18 +55,18 @@ describe('readLogbook', () => {
   });
 
   it('reads files whose name and type are getters, like a browser File', () => {
-    class GetterFile {
+    const getterFile = Object.create({
       get name() {
         return 'logbook.json';
-      }
+      },
       get type() {
         return 'application/json';
-      }
+      },
       get size() {
         return 0;
-      }
-    }
-    const result = readLogbook(new GetterFile(), encode(validJson));
+      },
+    });
+    const result = readLogbook(getterFile, encode(validJson));
     expect(result.ok && result.logbook.format).toBe('json');
   });
 

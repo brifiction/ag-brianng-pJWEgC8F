@@ -3,10 +3,17 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import type { LogbookSubmission } from './api.ts';
 import { makeLabel, vehicleLabel } from './catalogue.ts';
 
+/** Formats kilometres with thousands separators, e.g. 15,020. */
 const odometer = new Intl.NumberFormat('en-AU');
 
+/** Labels both the contents section and the entries table. */
 const HEADING_ID = 'logbook-contents-heading';
 
+/**
+ * Table of JSON logbook entries, one row per entry in file order.
+ * @param props - The entries to list.
+ * @returns The entries table.
+ */
 function EntriesTable({ entries }: Readonly<{ entries: LogbookEntry[] }>) {
   return (
     <div className="max-h-96 overflow-auto rounded-md border">
@@ -43,7 +50,11 @@ function EntriesTable({ entries }: Readonly<{ entries: LogbookEntry[] }>) {
   );
 }
 
-/** Shows what the API received. User-supplied text renders as literal text, never HTML. */
+/**
+ * Shows what the API received. User-supplied text renders as literal text, never HTML.
+ * @param props - The API's response.
+ * @returns The result card.
+ */
 export function SubmissionResult({ result }: Readonly<{ result: LogbookSubmission }>) {
   const { logbook } = result;
   const details = [

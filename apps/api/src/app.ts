@@ -4,9 +4,13 @@ import vehicles from './data/vehicles.json' with { type: 'json' };
 /** Make → Model → Badge[] catalogue. */
 export type VehicleCatalogue = Record<string, Record<string, string[]>>;
 
+/** The brief's vehicle data, typed. */
 const catalogue: VehicleCatalogue = vehicles;
 
-/** Builds the Express app without binding a port, so tests can mount it directly. */
+/**
+ * Builds the Express app without binding a port, so tests can mount it directly.
+ * @returns The configured Express app.
+ */
 export function createApp() {
   const app = express();
 

@@ -20,18 +20,28 @@ import { QuickSelect } from './QuickSelect.tsx';
 import { SubmissionResult } from './SubmissionResult.tsx';
 import { type SelectOption, VehicleSelect } from './VehicleSelect.tsx';
 
+/** Form state: the vehicle plus the attached logbook file. */
 interface FormValues extends Vehicle {
   logbook: File | null;
 }
 
+/** Starting values: nothing selected, no file. */
 const EMPTY: FormValues = { make: '', model: '', badge: '', logbook: null };
 
+/**
+ * Turns plain values into dropdown options, with an optional display label.
+ * @param values - The values to offer.
+ * @param label - Turns a value into its display label; defaults to the value itself.
+ * @returns The dropdown options.
+ */
 const toOptions = (values: string[], label = (value: string) => value): SelectOption[] =>
   values.map((value) => ({ value, label: label(value) }));
 
 /**
  * Make → Model → Badge selection with logbook upload.
  * Changing any part of the vehicle clears the parts after it and the attached logbook.
+ * @param props - The vehicle catalogue to choose from.
+ * @returns The quick-select buttons, the form and the result.
  */
 export function VehicleLogbookForm({ catalogue }: Readonly<{ catalogue: VehicleCatalogue }>) {
   const {
@@ -51,12 +61,17 @@ export function VehicleLogbookForm({ catalogue }: Readonly<{ catalogue: VehicleC
   const [result, setResult] = useState<LogbookSubmission | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
+  /** Removes the attached file and its error, and empties the file input. */
   const clearLogbook = () => {
     setValue('logbook', null);
     clearErrors('logbook');
     if (fileInput.current) fileInput.current.value = '';
   };
 
+  /**
+   * Sets the make and clears model, badge and logbook.
+   * @param next - Make chosen in the dropdown.
+   */
   const selectMake = (next: string) => {
     if (next === getValues('make')) return;
     setValue('make', next, { shouldValidate: true });
@@ -65,6 +80,10 @@ export function VehicleLogbookForm({ catalogue }: Readonly<{ catalogue: VehicleC
     clearLogbook();
   };
 
+  /**
+   * Sets the model and clears badge and logbook.
+   * @param next - Model chosen in the dropdown.
+   */
   const selectModel = (next: string) => {
     if (next === getValues('model')) return;
     setValue('model', next, { shouldValidate: true });
@@ -72,12 +91,20 @@ export function VehicleLogbookForm({ catalogue }: Readonly<{ catalogue: VehicleC
     clearLogbook();
   };
 
+  /**
+   * Sets the badge and clears the logbook.
+   * @param next - Badge chosen in the dropdown.
+   */
   const selectBadge = (next: string) => {
     if (next === getValues('badge')) return;
     setValue('badge', next, { shouldValidate: true });
     clearLogbook();
   };
 
+  /**
+   * Fills all three fields from a quick-select and clears the logbook.
+   * @param vehicle - The quick-select vehicle.
+   */
   const applyPreset = (vehicle: Vehicle) => {
     if (isSameVehicle(vehicle, getValues())) return;
     for (const key of ['make', 'model', 'badge'] as const) {
@@ -86,6 +113,10 @@ export function VehicleLogbookForm({ catalogue }: Readonly<{ catalogue: VehicleC
     clearLogbook();
   };
 
+  /**
+   * Uploads the logbook and shows the result, or the error message.
+   * @param values - The validated form values.
+   */
   const onSubmit = async ({ logbook: file, ...vehicle }: FormValues) => {
     if (!file) return;
     setSubmitError(null);
@@ -96,6 +127,7 @@ export function VehicleLogbookForm({ catalogue }: Readonly<{ catalogue: VehicleC
     }
   };
 
+  /** Clears every field, the file, the result and any error. */
   const startAgain = () => {
     reset(EMPTY);
     clearLogbook();
