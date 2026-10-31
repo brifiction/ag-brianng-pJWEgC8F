@@ -1,0 +1,20 @@
+{
+  "entries": [
+    {
+      "date": "2024-03-12",
+      "odometerKm": 15020,
+      "description": "Scheduled service #1. Oil and filter, tyre rotation.",
+      "workshop": "Brisbane Ford"
+    },
+    {
+      "date": "2025-03-08",
+      "odometerKm": 30410,
+      "description": "Scheduled service #2. Oil and filter, brake fluid, cabin filter."
+    },
+    {
+      "date": "2026-02-27",
+      "odometerKm": 45115,
+      "description": "Scheduled service #3. Oil and filter, air filter, wiper blades."
+    }
+  ]
+}
