@@ -12,3 +12,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Requirements, business rules and acceptance criteria (`docs/requirements.md`).
 - README with setup and run instructions.
 - Sample JSON service logbook (`samples/logbook.json`).
+- pnpm workspace with Turborepo `dev`, `build`, `typecheck` and `test` tasks.
+- Minimum release age of 14 days for all dependencies.
