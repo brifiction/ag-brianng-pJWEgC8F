@@ -14,3 +14,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Sample JSON service logbook (`samples/logbook.json`).
 - pnpm workspace with Turborepo `dev`, `build`, `typecheck` and `test` tasks.
 - Minimum release age of 14 days for all dependencies.
+- Biome formatting and linting, including all accessibility rules, with SonarJS rules run through ESLint.
