@@ -1,15 +1,10 @@
+import type { Logbook } from '@autograb/logbook';
 import axios from 'axios';
 import type { Vehicle, VehicleCatalogue } from './catalogue.ts';
-import type { LogbookEntry } from './logbook-file.ts';
-
-/** Logbook as returned by the API; JSON logbooks also carry their parsed entries. */
-export type SubmittedLogbook =
-  | { format: 'text'; content: string }
-  | { format: 'json'; content: string; entries: LogbookEntry[] };
 
 /** Vehicle and logbook echoed back by the API after an upload. */
 export interface LogbookSubmission extends Vehicle {
-  logbook: SubmittedLogbook;
+  logbook: Logbook;
 }
 
 export interface LogbookRequest extends Vehicle {

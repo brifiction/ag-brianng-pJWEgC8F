@@ -1,7 +1,7 @@
+import type { LogbookEntry } from '@autograb/logbook';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import type { LogbookSubmission } from './api.ts';
 import { makeLabel, vehicleLabel } from './catalogue.ts';
-import type { LogbookEntry } from './logbook-file.ts';
 
 const odometer = new Intl.NumberFormat('en-AU');
 

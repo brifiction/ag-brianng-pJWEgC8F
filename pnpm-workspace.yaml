@@ -1,5 +1,6 @@
 packages:
   - apps/*
+  - packages/files/*
 
 # Only install releases at least 14 days old (minutes).
 minimumReleaseAge: 20160

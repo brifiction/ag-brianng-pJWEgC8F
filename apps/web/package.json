@@ -11,6 +11,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
+    "@autograb/logbook": "workspace:*",
     "@fontsource-variable/geist": "^5.3.0",
     "axios": "^1.20.0",
     "class-variance-authority": "^0.7.1",

@@ -6,7 +6,7 @@ import tseslint from 'typescript-eslint';
 export default defineConfig(
   { ignores: ['**/dist/**', '**/.turbo/**', '**/coverage/**', 'apps/web/src/components/ui/**'] },
   {
-    files: ['apps/*/src/**/*.{ts,tsx}'],
+    files: ['apps/*/src/**/*.{ts,tsx}', 'packages/**/src/**/*.ts'],
     languageOptions: {
       parser: tseslint.parser,
       parserOptions: {

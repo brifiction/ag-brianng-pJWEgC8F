@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Logbook file rules live in a shared package (`packages/files/logbook`), so the web app and API apply the same checks.
+
 ## [0.2.0] - 2026-10-31
 
 ### Added

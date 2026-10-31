@@ -7,11 +7,12 @@ A React form for picking a vehicle (Make → Model → Badge) and uploading its 
 
 ## Stack
 
-| Workspace  | Tech                                                                           |
-| ---------- | ------------------------------------------------------------------------------ |
-| `apps/web` | React 19, Vite, TypeScript, Tailwind CSS 4, shadcn/ui (Radix), react-hook-form, axios |
-| `apps/api` | Express 5, TypeScript (run natively by Node), multer, `node:fs`                |
-| Tooling    | pnpm workspaces, Turborepo, Biome (lint + format), ESLint (SonarJS rules only) |
+| Workspace                | Purpose and tech                                                                                    |
+| ------------------------ | --------------------------------------------------------------------------------------------------- |
+| `apps/web`               | Vehicle form: React 19, Vite, TypeScript, Tailwind CSS 4, shadcn/ui (Radix), react-hook-form, axios |
+| `apps/api`               | API: Express 5, TypeScript (run natively by Node), multer, `node:fs`                                |
+| `packages/files/logbook` | Logbook file rules (formats, size, UTF-8, JSON format) shared by the web app and API                |
+| Tooling                  | pnpm workspaces, Turborepo, Biome (lint + format), ESLint (SonarJS rules only), Vitest, axe-core    |
 
 ## Prerequisites
 
