@@ -17,5 +17,9 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.ts'],
     mockReset: true,
+    /** In GitHub Actions, the job summary is titled with the workspace. */
+    reporters: process.env.GITHUB_ACTIONS
+      ? ['default', ['github-actions', { jobSummary: { title: 'Web tests (apps/web)' } }]]
+      : ['default'],
   },
 });

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Each workspace's test report in the GitHub Actions job summary is titled with its workspace, e.g. "API tests (apps/api)".
+
 ## [0.4.0] - 2026-10-31
 
 ### Added
