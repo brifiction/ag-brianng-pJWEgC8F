@@ -87,6 +87,17 @@ Tests sit next to the code they cover (`*.test.ts`, `*.test.tsx`) and are named 
 
 Production API: `pnpm --filter @autograb/api start`. Node runs the TypeScript source directly, so the API has no build step.
 
+## Security
+
+The API applies, to every response:
+
+- **Helmet** security headers (`nosniff`, frame blocking, CSP, `Referrer-Policy` and more), with `X-Powered-By` hidden.
+- **`Cache-Control: no-store`**, so logbook data is not cached.
+- **CORS for the web app only**: browser requests from any other origin get 403 `FORBIDDEN_ORIGIN`. Set the allowed origins with `WEB_ORIGINS` (see `.env.example`); the default is the local dev and preview servers.
+- **Upload limits**: 1 MB, one file, 30 uploads per minute per IP address. Uploads stay inside a fixed folder and are deleted as soon as they are read.
+
+The origin check protects users of the web app from other websites. It is not authentication: non-browser clients such as `curl` can send any `Origin`.
+
 ## Continuous integration
 
 [`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs on every push to `main` and every pull request:

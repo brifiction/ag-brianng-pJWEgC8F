@@ -20,6 +20,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+- Helmet security headers and `Cache-Control: no-store` on every API response.
+- CORS only for the web app's origins (`WEB_ORIGINS`); browser requests from other sites get 403 `FORBIDDEN_ORIGIN`.
 - multer 2.4.0 → 2.5.0 (high: denial of service).
 - Patched transitive dependencies through pnpm overrides: body-parser 2.4.0, qs 6.16.2 and follow-redirects 1.16.2.
 - Upload paths are rebuilt inside the upload folder before being read or deleted (path traversal).

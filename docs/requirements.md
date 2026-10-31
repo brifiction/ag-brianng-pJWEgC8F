@@ -419,6 +419,7 @@ Error body: `{ "error": { "code": string, "message": string, "field"?: string } 
 | `INVALID_UPLOAD`    | 400    | More than one file, or unexpected form fields               |
 | `UNSUPPORTED_TYPE`  | 415    | The file is neither plain text nor JSON                     |
 | `TOO_LARGE`         | 413    | The file is over 1 MB                                       |
+| `FORBIDDEN_ORIGIN`  | 403    | A browser request from a site other than the web app        |
 | `TOO_MANY_REQUESTS` | 429    | More than 30 uploads from one IP address in a minute        |
 | `INTERNAL_ERROR`    | 500    | Anything unexpected; details are logged, not returned       |
 
