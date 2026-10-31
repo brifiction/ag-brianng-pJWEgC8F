@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- GitHub Actions CI: lint, type-check, test and build, plus a Snyk scan of dependencies and source code.
 - README sections for reviewers: "Try it", "Project structure" and "How it works".
 
 ### Changed
