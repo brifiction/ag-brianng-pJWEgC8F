@@ -380,7 +380,7 @@ _Rules: BR-02, BR-09, BR-14, BR-15, BR-18, BR-19_
 
 **AC-12.1** — A **Reset** action clears all fields, the file and the result panel.
 
-## 7. API contract (proposed)
+## 7. API contract
 
 | Method | Path            | Request                                                           | Success                               | Errors                     |
 | ------ | --------------- | ----------------------------------------------------------------- | ------------------------------------- | -------------------------- |
@@ -407,6 +407,19 @@ type LogbookEntry = {
 ```
 
 Error body: `{ "error": { "code": string, "message": string, "field"?: string } }`
+
+| Code               | Status | When                                                     |
+| ------------------ | ------ | -------------------------------------------------------- |
+| `MISSING_FIELD`    | 400    | `make`, `model` or `badge` is missing                    |
+| `INVALID_VEHICLE`  | 400    | The vehicle is not in the catalogue; `field` names the part |
+| `MISSING_FILE`     | 400    | No logbook file was attached                             |
+| `EMPTY`            | 400    | The logbook file is empty                                |
+| `NOT_UTF8`         | 400    | The logbook is not UTF-8 text                            |
+| `INVALID_JSON`     | 400    | A JSON logbook breaks BR-19; `message` names the problem |
+| `INVALID_UPLOAD`   | 400    | More than one file, or unexpected form fields            |
+| `UNSUPPORTED_TYPE` | 415    | The file is neither plain text nor JSON                  |
+| `TOO_LARGE`        | 413    | The file is over 1 MB                                    |
+| `INTERNAL_ERROR`   | 500    | Anything unexpected; details are logged, not returned    |
 
 ## 8. Non-functional requirements
 

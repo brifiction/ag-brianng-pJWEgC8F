@@ -1,26 +1,38 @@
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import express from 'express';
-import vehicles from './data/vehicles.json' with { type: 'json' };
+import { catalogue } from './catalogue.ts';
+import { errorHandler } from './errors.ts';
+import { logbooksRouter } from './logbooks.ts';
 
-/** Make → Model → Badge[] catalogue. */
-export type VehicleCatalogue = Record<string, Record<string, string[]>>;
+/** Where uploads wait while a request is handled, unless the caller picks another folder. */
+const DEFAULT_UPLOAD_DIR = join(tmpdir(), 'autograb-logbooks');
 
-/** The brief's vehicle data, typed. */
-const catalogue: VehicleCatalogue = vehicles;
+/** Settings for {@link createApp}. */
+export interface AppOptions {
+  /** Folder for uploads while a request is handled. */
+  uploadDir?: string;
+}
 
 /**
  * Builds the Express app without binding a port, so tests can mount it directly.
+ * @param options - Optional settings; every field has a default.
  * @returns The configured Express app.
  */
-export function createApp() {
+export function createApp({ uploadDir = DEFAULT_UPLOAD_DIR }: AppOptions = {}) {
   const app = express();
+  app.disable('x-powered-by');
 
-  app.get('/api/health', (_req, res) => {
-    res.json({ status: 'ok' });
+  app.get('/api/health', (_request, response) => {
+    response.json({ status: 'ok' });
   });
 
-  app.get('/api/vehicles', (_req, res) => {
-    res.json(catalogue);
+  app.get('/api/vehicles', (_request, response) => {
+    response.json(catalogue);
   });
+
+  app.use('/api', logbooksRouter(uploadDir));
+  app.use(errorHandler);
 
   return app;
 }

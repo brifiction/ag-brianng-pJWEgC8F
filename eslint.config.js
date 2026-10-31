@@ -25,6 +25,8 @@ export default defineConfig(
       /** One `@param props` for destructured props, not one per field. */
       'jsdoc/require-param': ['error', { checkDestructured: false }],
       'jsdoc/check-param-names': ['error', { checkDestructured: false }],
+      /** TSDoc writes `@throws` without a `{type}`. */
+      'jsdoc/require-throws-type': 'off',
     },
   },
 );

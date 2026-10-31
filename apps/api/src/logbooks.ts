@@ -1,0 +1,87 @@
+import { readFile, rm } from 'node:fs/promises';
+import { type LogbookProblemCode, MAX_LOGBOOK_BYTES, readLogbook } from '@autograb/logbook';
+import { Router } from 'express';
+import multer from 'multer';
+import { findInvalidField, type Vehicle } from './catalogue.ts';
+import { ApiError } from './errors.ts';
+
+/** HTTP status for each reason a logbook is rejected. */
+const PROBLEM_STATUS: Record<LogbookProblemCode, number> = {
+  UNSUPPORTED_TYPE: 415,
+  TOO_LARGE: 413,
+  EMPTY: 400,
+  NOT_UTF8: 400,
+  INVALID_JSON: 400,
+};
+
+/** Form fields that make up a vehicle, in the order they are checked. */
+const VEHICLE_FIELDS = ['make', 'model', 'badge'] as const;
+
+/**
+ * Reads the vehicle from the form fields and checks it against the catalogue.
+ * @param body - The parsed form fields.
+ * @returns The vehicle.
+ * @throws {@link ApiError} 400 when a field is missing or the vehicle is not in the catalogue.
+ */
+function readVehicle(body: unknown): Vehicle {
+  const fields = (body ?? {}) as Record<string, unknown>;
+  for (const field of VEHICLE_FIELDS) {
+    const value = fields[field];
+    if (typeof value !== 'string' || value === '') {
+      throw new ApiError(400, 'MISSING_FIELD', `Select a ${field}`, field);
+    }
+  }
+  const vehicle = { make: fields.make, model: fields.model, badge: fields.badge } as Vehicle;
+  const invalid = findInvalidField(vehicle);
+  if (invalid) {
+    throw new ApiError(400, 'INVALID_VEHICLE', `Unknown ${invalid} "${vehicle[invalid]}"`, invalid);
+  }
+  return vehicle;
+}
+
+/**
+ * Reads an uploaded file, then deletes it, so nothing is left on disk whatever happens next.
+ * @param path - Where multer saved the upload.
+ * @returns The file's bytes.
+ */
+async function readAndDelete(path: string): Promise<Buffer> {
+  try {
+    return await readFile(path);
+  } finally {
+    await rm(path, { force: true });
+  }
+}
+
+/**
+ * Router for `POST /logbooks`: checks the vehicle and logbook, then sends both back.
+ * @param uploadDir - Folder where uploads wait until they are read.
+ * @returns The router.
+ */
+export function logbooksRouter(uploadDir: string): Router {
+  const upload = multer({
+    dest: uploadDir,
+    limits: { fileSize: MAX_LOGBOOK_BYTES, files: 1, fields: VEHICLE_FIELDS.length },
+  });
+  const router = Router();
+
+  router.post('/logbooks', upload.single('logbook'), async (request, response) => {
+    const file = request.file;
+    const bytes = file ? await readAndDelete(file.path) : null;
+
+    const vehicle = readVehicle(request.body);
+    if (!file || !bytes) throw new ApiError(400, 'MISSING_FILE', 'Attach a logbook', 'logbook');
+
+    const result = readLogbook(
+      { name: file.originalname, type: file.mimetype, size: file.size },
+      bytes,
+    );
+    if (!result.ok) {
+      const { code, message } = result.problem;
+      throw new ApiError(PROBLEM_STATUS[code], code, message, 'logbook');
+    }
+
+    response.json({ ...vehicle, logbook: result.logbook });
+  });
+
+  return router;
+}

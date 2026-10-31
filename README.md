@@ -34,14 +34,14 @@ pnpm dev
 | Command          | Purpose                           |
 | ---------------- | --------------------------------- |
 | `pnpm dev`       | Run web and API in watch mode     |
-| `pnpm build`     | Build both apps                   |
+| `pnpm build`     | Build the web app                 |
 | `pnpm typecheck` | Type-check every workspace        |
 | `pnpm test`      | Run unit and accessibility tests  |
 | `pnpm lint`      | Biome, SonarJS and TypeDoc checks |
 | `pnpm lint:fix`  | Auto-fix lint issues and format   |
 | `pnpm format`    | Format with Biome                 |
 
-Production API: `pnpm build && pnpm --filter @autograb/api start`.
+Production API: `pnpm --filter @autograb/api start`. Node runs the TypeScript source directly, so the API has no build step.
 
 ## Conventions
 
