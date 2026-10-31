@@ -2,8 +2,7 @@ import { useRef, useState } from 'react';
 import { Controller, useForm, useWatch } from 'react-hook-form';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
-import { Input } from '@/components/ui/input';
+import { FieldGroup } from '@/components/ui/field';
 import { Spinner } from '@/components/ui/spinner';
 import { type LogbookSubmission, submitLogbook, toErrorMessage } from './api.ts';
 import {
@@ -15,7 +14,8 @@ import {
   type Vehicle,
   type VehicleCatalogue,
 } from './catalogue.ts';
-import { LOGBOOK_ACCEPT, validateLogbook } from './logbook-file.ts';
+import { LogbookField } from './LogbookField.tsx';
+import { validateLogbook } from './logbook-file.ts';
 import { QuickSelect } from './QuickSelect.tsx';
 import { SubmissionResult } from './SubmissionResult.tsx';
 import { type SelectOption, VehicleSelect } from './VehicleSelect.tsx';
@@ -201,33 +201,16 @@ export function VehicleLogbookForm({ catalogue }: Readonly<{ catalogue: VehicleC
             control={control}
             rules={{ validate: validateLogbook }}
             render={({ field, fieldState }) => (
-              <Field data-invalid={fieldState.invalid}>
-                <FieldLabel htmlFor="logbook">Service logbook</FieldLabel>
-                <Input
-                  id="logbook"
-                  type="file"
-                  accept={LOGBOOK_ACCEPT}
-                  disabled={!badge}
-                  aria-invalid={fieldState.invalid}
-                  aria-describedby={
-                    fieldState.error ? 'logbook-hint logbook-error' : 'logbook-hint'
-                  }
-                  ref={(element) => {
-                    field.ref(element);
-                    fileInput.current = element;
-                  }}
-                  onBlur={field.onBlur}
-                  onChange={(event) =>
-                    setValue('logbook', event.target.files?.[0] ?? null, { shouldValidate: true })
-                  }
-                />
-                <FieldDescription id="logbook-hint">
-                  {badge
-                    ? 'Plain text (.txt) or JSON (.json), up to 1 MB.'
-                    : 'Select a badge first'}
-                </FieldDescription>
-                <FieldError id="logbook-error">{fieldState.error?.message}</FieldError>
-              </Field>
+              <LogbookField
+                disabled={!badge}
+                error={fieldState.error?.message}
+                inputRef={(element) => {
+                  field.ref(element);
+                  fileInput.current = element;
+                }}
+                onBlur={field.onBlur}
+                onChange={(file) => setValue('logbook', file, { shouldValidate: true })}
+              />
             )}
           />
 
