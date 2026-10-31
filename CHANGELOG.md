@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-10-31
+
 ### Added
 
 - `POST /api/logbooks`: checks the vehicle against the catalogue and the logbook against the shared rules, then returns both. The upload is deleted as soon as it is read.
