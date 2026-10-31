@@ -1,0 +1,16 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "target": "ES2023",
+    "lib": ["ES2023"],
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "types": ["node"],
+    "rootDir": "src",
+    "outDir": "dist",
+    "resolveJsonModule": true,
+    "rewriteRelativeImportExtensions": true,
+    "erasableSyntaxOnly": true
+  },
+  "include": ["src"]
+}
