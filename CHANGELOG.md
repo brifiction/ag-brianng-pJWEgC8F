@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Logbook file validation for plain text and JSON (UTF-8, 1 MB max), with each JSON entry checked against the logbook format.
+- Catalogue helpers and API client for vehicles and logbook uploads.
 
 ## [0.1.0] - 2026-10-31
 
