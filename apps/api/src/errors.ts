@@ -40,20 +40,25 @@ function fromUploadError(error: multer.MulterError): ApiError {
 }
 
 /**
- * Sends every error as JSON. Unexpected errors are logged and hidden behind a generic 500.
+ * Decides how any error is reported. Unexpected errors are logged and hidden behind a generic 500.
+ * @param error - Whatever was thrown or passed to `next`.
+ * @returns The error to send to the client.
+ */
+function toApiError(error: unknown): ApiError {
+  if (error instanceof ApiError) return error;
+  if (error instanceof multer.MulterError) return fromUploadError(error);
+  console.error(error);
+  return new ApiError(500, 'INTERNAL_ERROR', 'Something went wrong, please try again');
+}
+
+/**
+ * Sends every error as `{ error: { code, message, field } }`.
  * @param error - Whatever was thrown or passed to `next`.
  * @param _request - The request (unused).
  * @param response - The response to send.
  * @param _next - Next handler (unused, but Express needs four parameters to spot an error handler).
  */
 export const errorHandler: ErrorRequestHandler = (error, _request, response, _next) => {
-  let apiError: ApiError;
-  if (error instanceof ApiError) apiError = error;
-  else if (error instanceof multer.MulterError) apiError = fromUploadError(error);
-  else {
-    console.error(error);
-    apiError = new ApiError(500, 'INTERNAL_ERROR', 'Something went wrong, please try again');
-  }
-  const { status, code, message, field } = apiError;
+  const { status, code, message, field } = toApiError(error);
   response.status(status).json({ error: { code, message, field } });
 };

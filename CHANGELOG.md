@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- API errors are converted in one place (`toApiError`) before being sent.
 - The logbook file input is its own component (`LogbookField`), like the vehicle dropdowns.
 
 ## [0.3.0] - 2026-10-31
