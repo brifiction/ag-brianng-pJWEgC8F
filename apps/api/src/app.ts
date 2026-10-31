@@ -12,6 +12,8 @@ const DEFAULT_UPLOAD_DIR = join(tmpdir(), 'autograb-logbooks');
 export interface AppOptions {
   /** Folder for uploads while a request is handled. */
   uploadDir?: string;
+  /** Most logbook uploads one IP address may send per minute. */
+  uploadsPerMinute?: number;
 }
 
 /**
@@ -19,7 +21,10 @@ export interface AppOptions {
  * @param options - Optional settings; every field has a default.
  * @returns The configured Express app.
  */
-export function createApp({ uploadDir = DEFAULT_UPLOAD_DIR }: AppOptions = {}) {
+export function createApp({
+  uploadDir = DEFAULT_UPLOAD_DIR,
+  uploadsPerMinute = 30,
+}: AppOptions = {}) {
   const app = express();
   app.disable('x-powered-by');
 
@@ -31,7 +36,7 @@ export function createApp({ uploadDir = DEFAULT_UPLOAD_DIR }: AppOptions = {}) {
     response.json(catalogue);
   });
 
-  app.use('/api', logbooksRouter(uploadDir));
+  app.use('/api', logbooksRouter(uploadDir, uploadsPerMinute));
   app.use(errorHandler);
 
   return app;

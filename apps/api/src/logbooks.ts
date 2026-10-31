@@ -1,6 +1,8 @@
 import { readFile, rm } from 'node:fs/promises';
+import { resolve, sep } from 'node:path';
 import { type LogbookProblemCode, MAX_LOGBOOK_BYTES, readLogbook } from '@autograb/logbook';
-import { Router } from 'express';
+import { type RequestHandler, Router } from 'express';
+import { rateLimit } from 'express-rate-limit';
 import multer from 'multer';
 import { findInvalidField, type Vehicle } from './catalogue.ts';
 import { ApiError } from './errors.ts';
@@ -40,8 +42,24 @@ function readVehicle(body: unknown): Vehicle {
 }
 
 /**
+ * Builds the path of an upload inside `uploadDir`, never trusting a path from the upload itself.
+ * @param uploadDir - Folder where uploads wait until they are read.
+ * @param fileName - The name multer gave the upload.
+ * @returns The absolute path inside `uploadDir`.
+ * @throws {@link ApiError} 400 when the name would point outside `uploadDir`.
+ */
+export function uploadPath(uploadDir: string, fileName: string): string {
+  const folder = resolve(uploadDir);
+  const path = resolve(folder, fileName);
+  if (!path.startsWith(folder + sep)) {
+    throw new ApiError(400, 'INVALID_UPLOAD', 'Send one logbook file', 'logbook');
+  }
+  return path;
+}
+
+/**
  * Reads an uploaded file, then deletes it, so nothing is left on disk whatever happens next.
- * @param path - Where multer saved the upload.
+ * @param path - Checked path of the upload, from {@link uploadPath}.
  * @returns The file's bytes.
  */
 async function readAndDelete(path: string): Promise<Buffer> {
@@ -53,20 +71,38 @@ async function readAndDelete(path: string): Promise<Buffer> {
 }
 
 /**
+ * Answers 429 through the API error handler, so it has the usual JSON error shape.
+ * @param _request - The request (unused).
+ * @param _response - The response (unused).
+ * @param next - Passes the error to the error handler.
+ */
+const rejectTooManyUploads: RequestHandler = (_request, _response, next) => {
+  next(new ApiError(429, 'TOO_MANY_REQUESTS', 'Too many uploads; try again in a minute'));
+};
+
+/**
  * Router for `POST /logbooks`: checks the vehicle and logbook, then sends both back.
  * @param uploadDir - Folder where uploads wait until they are read.
+ * @param uploadsPerMinute - Most uploads one IP address may send per minute.
  * @returns The router.
  */
-export function logbooksRouter(uploadDir: string): Router {
+export function logbooksRouter(uploadDir: string, uploadsPerMinute: number): Router {
+  const limiter = rateLimit({
+    windowMs: 60_000,
+    limit: uploadsPerMinute,
+    standardHeaders: 'draft-8',
+    legacyHeaders: false,
+    handler: rejectTooManyUploads,
+  });
   const upload = multer({
     dest: uploadDir,
     limits: { fileSize: MAX_LOGBOOK_BYTES, files: 1, fields: VEHICLE_FIELDS.length },
   });
   const router = Router();
 
-  router.post('/logbooks', upload.single('logbook'), async (request, response) => {
+  router.post('/logbooks', limiter, upload.single('logbook'), async (request, response) => {
     const file = request.file;
-    const bytes = file ? await readAndDelete(file.path) : null;
+    const bytes = file ? await readAndDelete(uploadPath(uploadDir, file.filename)) : null;
 
     const vehicle = readVehicle(request.body);
     if (!file || !bytes) throw new ApiError(400, 'MISSING_FILE', 'Attach a logbook', 'logbook');

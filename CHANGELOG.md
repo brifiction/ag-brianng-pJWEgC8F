@@ -18,6 +18,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - API errors are converted in one place (`toApiError`) before being sent.
 - The logbook file input is its own component (`LogbookField`), like the vehicle dropdowns.
 
+### Security
+
+- multer 2.4.0 → 2.5.0 (high: denial of service).
+- Patched transitive dependencies through pnpm overrides: body-parser 2.4.0, qs 6.16.2 and follow-redirects 1.16.2.
+- Upload paths are rebuilt inside the upload folder before being read or deleted (path traversal).
+- `POST /api/logbooks` is rate-limited to 30 uploads per minute per IP address.
+
 ## [0.3.0] - 2026-10-31
 
 ### Added

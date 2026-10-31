@@ -4,3 +4,16 @@ packages:
 
 # Only install releases at least 14 days old (minutes).
 minimumReleaseAge: 20160
+
+# Security fixes newer than 14 days, allowed one exact version at a time.
+minimumReleaseAgeExclude:
+  - multer@2.5.0
+  - body-parser@2.4.0
+  - qs@6.16.2
+  - follow-redirects@1.16.2
+
+# Patched versions for vulnerable transitive dependencies (no fix available via their parents yet).
+overrides:
+  body-parser@>=2.0.0 <2.4.0: 2.4.0
+  qs@>=6.16.0 <6.16.2: 6.16.2
+  follow-redirects@>=1.16.0 <1.16.2: 1.16.2

@@ -5,6 +5,7 @@ import { MAX_LOGBOOK_BYTES } from '@autograb/logbook';
 import request from 'supertest';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 import { createApp } from './app.ts';
+import { uploadPath } from './logbooks.ts';
 
 /** Fresh upload folder per run, so the clean-up check sees only this suite's files. */
 let uploadDir: string;
@@ -152,6 +153,33 @@ describe('POST /api/logbooks', () => {
     });
     expect(response.status).toBe(400);
     expect(response.body.error).toMatchObject({ code: 'INVALID_UPLOAD' });
+  });
+});
+
+describe('rate limiting', () => {
+  it('answers 429 with a JSON error once an IP passes its upload limit', async () => {
+    const limited = createApp({ uploadDir, uploadsPerMinute: 1 });
+    /**
+     * Sends an upload without a badge, so it fails fast with 400 until the limit is reached.
+     * @returns The pending request.
+     */
+    const send = () =>
+      request(limited).post('/api/logbooks').field('make', 'ford').field('model', 'Ranger');
+
+    expect((await send()).status).toBe(400);
+    const response = await send();
+    expect(response.status).toBe(429);
+    expect(response.body.error).toMatchObject({ code: 'TOO_MANY_REQUESTS' });
+  });
+});
+
+describe('uploadPath', () => {
+  it('keeps uploads inside the upload folder', () => {
+    expect(uploadPath('/srv/uploads', 'a1b2c3')).toBe('/srv/uploads/a1b2c3');
+  });
+
+  it.each(['../escape', '../../etc/passwd', '/etc/passwd', '..'])('rejects %s', (name) => {
+    expect(() => uploadPath('/srv/uploads', name)).toThrow('Send one logbook file');
   });
 });
 
